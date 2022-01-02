@@ -479,6 +479,10 @@ typedef int32_t  s32;
 typedef int16_t s16;
 typedef int8_t  s8;
 
+#define u32 uint32_t
+#define u16 uint16_t
+#define u8 uint8_t
+
 typedef const int32_t sc32;  /*!< Read Only */
 typedef const int16_t sc16;  /*!< Read Only */
 typedef const int8_t sc8;   /*!< Read Only */
@@ -504,6 +508,8 @@ typedef __I uint16_t vuc16;  /*!< Read Only */
 typedef __I uint8_t vuc8;   /*!< Read Only */
 
 typedef enum {RESET = 0, SET = !RESET} FlagStatus, ITStatus;
+
+typedef enum {FALSE = 0,TRUE = 1} bool;
 
 typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 #define IS_FUNCTIONAL_STATE(STATE) (((STATE) == DISABLE) || ((STATE) == ENABLE))

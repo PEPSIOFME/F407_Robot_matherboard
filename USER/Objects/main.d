@@ -35,5 +35,6 @@
 .\objects\main.o: ..\FWLIB\inc\stm32f4xx_dac.h
 .\objects\main.o: ..\FWLIB\inc\stm32f4xx_dcmi.h
 .\objects\main.o: ..\FWLIB\inc\stm32f4xx_fsmc.h
-.\objects\main.o: ..\SYSTEM\common.h
+.\objects\main.o: ..\SYSTEM\delay\delay.h
+.\objects\main.o: ..\SYSTEM\sys\sys.h
 .\objects\main.o: ..\APP\i2c.h
