@@ -4,7 +4,7 @@ int main(void)
 {
     uint8_t i[2]={0x05,0x05},a,adds = 0x12;
 
-    delay_init(168);
+    delay_init();
     IIC_GPIO_Init();
     //delay_ms(10);
     adds <<= 1;
@@ -17,7 +17,7 @@ int main(void)
     }
     IIC_Stop();
 
-    
+    return 0;
 }
 
 
