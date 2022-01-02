@@ -1,6 +1,6 @@
 .\objects\i2c.o: ..\APP\i2c.c
 .\objects\i2c.o: ..\APP\i2c.h
-.\objects\i2c.o: ..\SYSTEM\delay\delay.h
+.\objects\i2c.o: ..\SYSTEM\common.h
 .\objects\i2c.o: ..\CORE\stm32f4xx.h
 .\objects\i2c.o: ..\CORE\core_cm4.h
 .\objects\i2c.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h

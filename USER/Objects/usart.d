@@ -1,5 +1,5 @@
-.\objects\usart.o: ..\SYSTEM\usart\usart.c
-.\objects\usart.o: ..\SYSTEM\sys\sys.h
+.\objects\usart.o: ..\SYSTEM\usart.c
+.\objects\usart.o: ..\SYSTEM\common.h
 .\objects\usart.o: ..\CORE\stm32f4xx.h
 .\objects\usart.o: ..\CORE\core_cm4.h
 .\objects\usart.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
@@ -35,5 +35,5 @@
 .\objects\usart.o: ..\FWLIB\inc\stm32f4xx_dac.h
 .\objects\usart.o: ..\FWLIB\inc\stm32f4xx_dcmi.h
 .\objects\usart.o: ..\FWLIB\inc\stm32f4xx_fsmc.h
-.\objects\usart.o: ..\SYSTEM\usart\usart.h
+.\objects\usart.o: ..\SYSTEM\usart.h
 .\objects\usart.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
