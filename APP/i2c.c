@@ -104,9 +104,10 @@ void IIC_Stop(void)
   * @param  None
   * @retval None
   */
-bool IIC_WaitAck(void)
+uint8_t IIC_WaitAck(void)
 {
     uint8_t count = 0;
+    uint8_t ack = 0;
 
     SDA_High;
     delay_us(4);
@@ -115,14 +116,15 @@ bool IIC_WaitAck(void)
         count++;
         if(count > 250)
         {
-            return FALSE;
+            ack = 1;
+            break;
         }
     }
     SCL_High;
     delay_us(4);
     SCL_Low;
     
-    return TRUE;
+    return ack;
 }
 
 /**
@@ -216,95 +218,95 @@ uint8_t IIC_ReadByte(uint8_t ack)
 	return rcv;
 }
 
-/**
-  * @brief  单字节写入
-  * @param  MPU9250寄存器写入
-  * @retval 是否成功
-  */
-bool Single_Write(uint8_t SlaveAddress, uint8_t REG_Address, uint8_t REG_data)		     //void
-{
-  	IIC_Begin();
-    IIC_WriteByte(SlaveAddress);   //发送设备地址+写信号//I2C_SendByte(((REG_Address & 0x0700) >>7) | SlaveAddress & 0xFFFE);//设置高起始地址+器件地址 
-    if(!IIC_WaitAck())
-    {
-        IIC_Stop(); 
-        return FALSE;
-    }
-    IIC_WriteByte(REG_Address);   //设置低起始地址      
-    IIC_WaitAck();	
-    IIC_WriteByte(REG_data);
-    IIC_WaitAck();   
-    IIC_Stop();
-    delay_ms(5);
-    return TRUE;
-}
+// /**
+//   * @brief  单字节写入
+//   * @param  MPU9250寄存器写入
+//   * @retval 是否成功
+//   */
+// bool Single_Write(uint8_t SlaveAddress, uint8_t REG_Address, uint8_t REG_data)		     //void
+// {
+//   	IIC_Begin();
+//     IIC_WriteByte(SlaveAddress);   //发送设备地址+写信号//I2C_SendByte(((REG_Address & 0x0700) >>7) | SlaveAddress & 0xFFFE);//设置高起始地址+器件地址 
+//     if(!IIC_WaitAck())
+//     {
+//         IIC_Stop(); 
+//         return FALSE;
+//     }
+//     IIC_WriteByte(REG_Address);   //设置低起始地址      
+//     IIC_WaitAck();	
+//     IIC_WriteByte(REG_data);
+//     IIC_WaitAck();   
+//     IIC_Stop();
+//     delay_ms(5);
+//     return TRUE;
+// }
 
-/**
-  * @brief  单字节读取
-  * @param  MPU9250寄存器读取
-  * @retval 读取数据
-  */
-uint8_t Single_Read(uint8_t SlaveAddress,uint8_t REG_Address)
-{   
-    uint8_t REG_data;     	
-	IIC_Begin();
-    IIC_WriteByte(SlaveAddress); //I2C_SendByte(((REG_Address & 0x0700) >>7) | REG_Address & 0xFFFE);//设置高起始地址+器件地址 
-    if(!IIC_WaitAck())
-    {
-        IIC_Stop();
-        test=1; 
-        return FALSE;
-    }
-    IIC_WriteByte((uint8_t) REG_Address);   //设置低起始地址      
-    IIC_WaitAck();
-    IIC_Begin();
-    IIC_WriteByte(SlaveAddress+1);
-    IIC_WaitAck();
+// /**
+//   * @brief  单字节读取
+//   * @param  MPU9250寄存器读取
+//   * @retval 读取数据
+//   */
+// uint8_t Single_Read(uint8_t SlaveAddress,uint8_t REG_Address)
+// {   
+//     uint8_t REG_data;     	
+// 	IIC_Begin();
+//     IIC_WriteByte(SlaveAddress); //I2C_SendByte(((REG_Address & 0x0700) >>7) | REG_Address & 0xFFFE);//设置高起始地址+器件地址 
+//     if(!IIC_WaitAck())
+//     {
+//         IIC_Stop();
+//         test=1; 
+//         return FALSE;
+//     }
+//     IIC_WriteByte((uint8_t) REG_Address);   //设置低起始地址      
+//     IIC_WaitAck();
+//     IIC_Begin();
+//     IIC_WriteByte(SlaveAddress+1);
+//     IIC_WaitAck();
 
-	REG_data= IIC_ReadByte(1);
-    IIC_NAck();
-    IIC_Stop();
-    //return TRUE;
-	return REG_data;
-}
+// 	REG_data= IIC_ReadByte(1);
+//     IIC_NAck();
+//     IIC_Stop();
+//     //return TRUE;
+// 	return REG_data;
+// }
 
-void Init_MPU9250(void)
-{
-/*
-   Single_Write(GYRO_ADDRESS,PWR_M, 0x80);   //
-   Single_Write(GYRO_ADDRESS,SMPL, 0x07);    //
-   Single_Write(GYRO_ADDRESS,DLPF, 0x1E);    //±2000°
-   Single_Write(GYRO_ADDRESS,INT_C, 0x00 );  //
-   Single_Write(GYRO_ADDRESS,PWR_M, 0x00);   //
-*/
-    Single_Write(GYRO_ADDRESS,PWR_MGMT_1, 0x00);	//解除休眠状态
-	Single_Write(GYRO_ADDRESS,SMPLRT_DIV, 0x07);
-	Single_Write(GYRO_ADDRESS,CONFIG, 0x06);
-	Single_Write(GYRO_ADDRESS,GYRO_CONFIG, 0x18);
-	Single_Write(GYRO_ADDRESS,ACCEL_CONFIG, 0x01);
-  //----------------
-//	Single_Write(GYRO_ADDRESS,0x6A,0x00);//close Master Mode	
+// void Init_MPU9250(void)
+// {
+// /*
+//    Single_Write(GYRO_ADDRESS,PWR_M, 0x80);   //
+//    Single_Write(GYRO_ADDRESS,SMPL, 0x07);    //
+//    Single_Write(GYRO_ADDRESS,DLPF, 0x1E);    //±2000°
+//    Single_Write(GYRO_ADDRESS,INT_C, 0x00 );  //
+//    Single_Write(GYRO_ADDRESS,PWR_M, 0x00);   //
+// */
+//     Single_Write(GYRO_ADDRESS,PWR_MGMT_1, 0x00);	//解除休眠状态
+// 	Single_Write(GYRO_ADDRESS,SMPLRT_DIV, 0x07);
+// 	Single_Write(GYRO_ADDRESS,CONFIG, 0x06);
+// 	Single_Write(GYRO_ADDRESS,GYRO_CONFIG, 0x18);
+// 	Single_Write(GYRO_ADDRESS,ACCEL_CONFIG, 0x01);
+//   //----------------
+// //	Single_Write(GYRO_ADDRESS,0x6A,0x00);//close Master Mode	
 
-}
+// }
 
-//******读取MPU9250数据****************************************
-void READ_MPU9250_ACCEL(void)
-{ 
+// //******读取MPU9250数据****************************************
+// void READ_MPU9250_ACCEL(void)
+// { 
 
-   BUF[0]=Single_Read(ACCEL_ADDRESS,ACCEL_XOUT_L); 
-   BUF[1]=Single_Read(ACCEL_ADDRESS,ACCEL_XOUT_H);
-   T_X=	(BUF[1]<<8)|BUF[0];
-   T_X/=164; 						   //读取计算X轴数据
+//    BUF[0]=Single_Read(ACCEL_ADDRESS,ACCEL_XOUT_L); 
+//    BUF[1]=Single_Read(ACCEL_ADDRESS,ACCEL_XOUT_H);
+//    T_X=	(BUF[1]<<8)|BUF[0];
+//    T_X/=164; 						   //读取计算X轴数据
 
-   BUF[2]=Single_Read(ACCEL_ADDRESS,ACCEL_YOUT_L);
-   BUF[3]=Single_Read(ACCEL_ADDRESS,ACCEL_YOUT_H);
-   T_Y=	(BUF[3]<<8)|BUF[2];
-   T_Y/=164; 						   //读取计算Y轴数据
-   BUF[4]=Single_Read(ACCEL_ADDRESS,ACCEL_ZOUT_L);
-   BUF[5]=Single_Read(ACCEL_ADDRESS,ACCEL_ZOUT_H);
-   T_Z=	(BUF[5]<<8)|BUF[4];
-   T_Z/=164; 					       //读取计算Z轴数据
+//    BUF[2]=Single_Read(ACCEL_ADDRESS,ACCEL_YOUT_L);
+//    BUF[3]=Single_Read(ACCEL_ADDRESS,ACCEL_YOUT_H);
+//    T_Y=	(BUF[3]<<8)|BUF[2];
+//    T_Y/=164; 						   //读取计算Y轴数据
+//    BUF[4]=Single_Read(ACCEL_ADDRESS,ACCEL_ZOUT_L);
+//    BUF[5]=Single_Read(ACCEL_ADDRESS,ACCEL_ZOUT_H);
+//    T_Z=	(BUF[5]<<8)|BUF[4];
+//    T_Z/=164; 					       //读取计算Z轴数据
  
-}
+// }
 
 

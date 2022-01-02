@@ -3,7 +3,7 @@
 #include "stm32f4xx.h" 
 
 
-#define SYSCLK 168    //œµÕ≥ ±÷”
+#define SYSCLK 168
 
 void delay_init(void);
 void delay_ms(u16 nms);

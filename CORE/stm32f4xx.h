@@ -509,7 +509,7 @@ typedef __I uint8_t vuc8;   /*!< Read Only */
 
 typedef enum {RESET = 0, SET = !RESET} FlagStatus, ITStatus;
 
-typedef enum {FALSE = 0,TRUE = 1} bool;
+// typedef enum {FALSE = 0,TRUE = 1} bool;
 
 typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 #define IS_FUNCTIONAL_STATE(STATE) (((STATE) == DISABLE) || ((STATE) == ENABLE))
