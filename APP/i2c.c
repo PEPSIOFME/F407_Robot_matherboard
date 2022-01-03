@@ -182,7 +182,6 @@ void IIC_WriteByte(uint8_t TXD)
         SCL_High;
         delay_us(2);
         SCL_Low;
-        delay_us(2);
     }
 }
 

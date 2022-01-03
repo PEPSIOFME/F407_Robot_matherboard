@@ -39,3 +39,6 @@
 .\objects\main.o: ..\APP\i2c.h
 .\objects\main.o: ..\APP\uart.h
 .\objects\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\objects\main.o: ..\APP\lcd.h
+.\objects\main.o: ..\APP\lcd_init.h
+.\objects\main.o: ..\APP\pic.h

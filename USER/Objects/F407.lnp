@@ -1,4 +1,4 @@
---cpu=Cortex-M4.fp.sp
+--cpu=Cortex-M4.fp
 ".\objects\stm32f4xx_it.o"
 ".\objects\system_stm32f4xx.o"
 ".\objects\startup_stm32f40_41xxx.o"
@@ -41,6 +41,8 @@
 ".\objects\main.o"
 ".\objects\i2c.o"
 ".\objects\uart.o"
+".\objects\lcd.o"
+".\objects\lcd_init.o"
 --library_type=microlib --strict --scatter ".\Objects\F407.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
