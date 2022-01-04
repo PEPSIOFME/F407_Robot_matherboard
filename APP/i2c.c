@@ -43,10 +43,10 @@
 #define MAG_ADDRESS    0x18   //磁场地址
 #define ACCEL_ADDRESS  0xD0 
 
-unsigned char TX_DATA[4];  	 //显示据缓存区
-unsigned char BUF[10];       //接收数据缓存区
-char  test=0; 				 //IIC用到
-short T_X,T_Y,T_Z,T_T;		 //X,Y,Z轴，温度
+uint8_t TX_DATA[4];  	    //显示据缓存区
+uint8_t BUF[10];            //接收数据缓存区
+//char  test=0; 				//IIC用到
+short T_X,T_Y,T_Z,T_T;		//X,Y,Z轴，温度
 
 
 
@@ -116,7 +116,7 @@ bool IIC_WaitAck(void)
         count++;
         if(count > 250)
         {
-            return FALSE;
+			return FALSE;
         }
     }
     SCL_High;
@@ -252,7 +252,7 @@ uint8_t Single_Read(uint8_t SlaveAddress,uint8_t REG_Address)
     if(!IIC_WaitAck())
     {
         IIC_Stop();
-        test=1; 
+        //test=1; 
         return FALSE;
     }
     IIC_WriteByte((uint8_t) REG_Address);   //设置低起始地址      
@@ -268,6 +268,11 @@ uint8_t Single_Read(uint8_t SlaveAddress,uint8_t REG_Address)
 	return REG_data;
 }
 
+/**
+  * @brief  MPU9250初始化
+  * @param  None
+  * @retval None
+  */
 void Init_MPU9250(void)
 {
 /*
@@ -287,7 +292,11 @@ void Init_MPU9250(void)
 
 }
 
-//******读取MPU9250数据****************************************
+/**
+  * @brief  MPU9250读加速度
+  * @param  None
+  * @retval None
+  */
 void READ_MPU9250_ACCEL(void)
 { 
 
@@ -307,6 +316,11 @@ void READ_MPU9250_ACCEL(void)
  
 }
 
+/**
+  * @brief  MPU9250读陀螺仪
+  * @param  None
+  * @retval None
+  */
 void READ_MPU9250_GYRO(void)
 { 
 
@@ -331,6 +345,11 @@ void READ_MPU9250_GYRO(void)
   // T_T = 35+ ((double) (T_T + 13200)) / 280;// 读取计算出温度
 }
 
+/**
+  * @brief  MPU9250读指南针
+  * @param  None
+  * @retval None
+  */
 void READ_MPU9250_MAG(void)
 { 
    Single_Write(GYRO_ADDRESS,0x37,0x02);//turn on Bypass Mode 
@@ -353,18 +372,18 @@ void READ_MPU9250_MAG(void)
 }
 
 //********串口发送数据***************************************
-void Send_data(uint8_t MAG,uint8_t axis)
+void Send_data(void)
 {
     uint8_t i;
-    USART1_SendData(MAG);
-    USART1_SendData(axis);
-    USART1_SendData(':');
+    // USART1_SendData(MAG);
+    // USART1_SendData(axis);
+    // USART1_SendData(':');
     for(i=0;i<4;i++)
     {
         USART1_SendData(TX_DATA[i]);
     }
-    USART1_SendData(' ');
-    USART1_SendData(' ');
+    // USART1_SendData(',');
+    // USART1_SendData(' ');
 }
 
 void USART1_SendData(uint8_t SendData)

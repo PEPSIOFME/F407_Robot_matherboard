@@ -5,5 +5,8 @@
     "--log=verbose",
     "--header-insertion=never",
     "--query-driver=/usr/bin/g++*"
-  ]
+],
+"files.associations": {
+    "TEST446Q.C": "cpp"
+}
 }

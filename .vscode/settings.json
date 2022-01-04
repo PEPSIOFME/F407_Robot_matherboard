@@ -1,6 +1,11 @@
 {
     "files.associations": {
         "main.h": "c",
-        "common.h": "c"
+        "common.h": "c",
+        "*.rh": "c",
+        "atomic": "c",
+        "memory": "c",
+        "xstring": "c",
+        "xutility": "c"
     }
 }

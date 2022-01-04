@@ -82,11 +82,13 @@
         {
             "name": "Project",
             "includePath": [
-                "c:\\Users\\10135\\Desktop\\F407_Robot_matherboard\\APP",
-                "c:\\Users\\10135\\Desktop\\F407_Robot_matherboard\\CORE",
-                "c:\\Users\\10135\\Desktop\\F407_Robot_matherboard\\FWLIB\\inc",
-                "c:\\Users\\10135\\Desktop\\F407_Robot_matherboard\\SYSTEM",
-                "c:\\Users\\10135\\Desktop\\F407_Robot_matherboard\\FWLIB\\src"
+                "c:\\Users\\10135\\Desktop\\Project\\F407_Robot_matherboard\\APP",
+                "c:\\Users\\10135\\Desktop\\Project\\F407_Robot_matherboard\\CORE",
+                "c:\\Users\\10135\\Desktop\\Project\\F407_Robot_matherboard\\FWLIB\\inc",
+                "c:\\Users\\10135\\Desktop\\Project\\F407_Robot_matherboard\\SYSTEM",
+                "C:\\Keil_v5\\ARM\\ARMCC\\include",
+                "C:\\Keil_v5\\ARM\\ARMCC\\include\\rw",
+                "c:\\Users\\10135\\Desktop\\Project\\F407_Robot_matherboard\\FWLIB\\src"
             ],
             "defines": [
                 "STM32F40_41xxx",
