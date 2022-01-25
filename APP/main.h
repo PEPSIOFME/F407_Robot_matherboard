@@ -8,6 +8,7 @@
 #include "lcd.h"
 #include "lcd_init.h"
 #include "pic.h"
+#include "test.h"
 
 #endif
 

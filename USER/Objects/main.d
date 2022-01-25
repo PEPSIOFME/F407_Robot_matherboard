@@ -42,3 +42,4 @@
 .\objects\main.o: ..\APP\lcd.h
 .\objects\main.o: ..\APP\lcd_init.h
 .\objects\main.o: ..\APP\pic.h
+.\objects\main.o: ..\APP\test.h
