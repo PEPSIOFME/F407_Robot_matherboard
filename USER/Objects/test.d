@@ -7,6 +7,10 @@
 .\objects\test.o: ..\CORE\core_cmFunc.h
 .\objects\test.o: ..\CORE\core_cm4_simd.h
 .\objects\test.o: ..\CORE\system_stm32f4xx.h
+.\objects\test.o: ..\DSP_LIB\Include\arm_math.h
+.\objects\test.o: ..\DSP_LIB\Include\core_cm4.h
+.\objects\test.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\objects\test.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
 .\objects\test.o: ..\CORE\stm32f4xx_conf.h
 .\objects\test.o: ..\FWLIB\inc\stm32f4xx_adc.h
 .\objects\test.o: ..\CORE\stm32f4xx.h

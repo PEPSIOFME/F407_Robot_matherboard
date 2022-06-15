@@ -8,6 +8,10 @@
 .\objects\i2c.o: ..\CORE\core_cmFunc.h
 .\objects\i2c.o: ..\CORE\core_cm4_simd.h
 .\objects\i2c.o: ..\CORE\system_stm32f4xx.h
+.\objects\i2c.o: ..\DSP_LIB\Include\arm_math.h
+.\objects\i2c.o: ..\DSP_LIB\Include\core_cm4.h
+.\objects\i2c.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\objects\i2c.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
 .\objects\i2c.o: ..\CORE\stm32f4xx_conf.h
 .\objects\i2c.o: ..\FWLIB\inc\stm32f4xx_adc.h
 .\objects\i2c.o: ..\CORE\stm32f4xx.h

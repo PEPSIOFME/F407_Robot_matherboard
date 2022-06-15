@@ -3,6 +3,6 @@
 
 
 void usart1_Init(void);
-int fputc(int ch,FILE *f);
+//int fputc(int ch,FILE *f);
 
 

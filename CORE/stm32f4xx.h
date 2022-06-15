@@ -164,6 +164,7 @@
 #define __NVIC_PRIO_BITS          4       /*!< STM32F4XX uses 4 Bits for the Priority Levels */
 #define __Vendor_SysTickConfig    0       /*!< Set to 1 if different SysTick Config is used  */
 #define __FPU_PRESENT             1       /*!< FPU present                                   */
+//#define __FPU_USED				  1
 
 /**
  * @brief STM32F4XX Interrupt Number Definition, according to the selected device 
@@ -471,6 +472,7 @@ typedef enum IRQn
 #include "system_stm32f4xx.h"
 #include <stdint.h>
 
+#include "arm_math.h"
 /** @addtogroup Exported_types
   * @{
   */  

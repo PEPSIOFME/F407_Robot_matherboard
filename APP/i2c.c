@@ -52,27 +52,25 @@ short T_X,T_Y,T_Z,T_T;		//X,Y,Z轴，温度
 
 /**
   * @brief  IIC_GPIO初始化
-  * @param  None
   * @retval None
   */
 void IIC_GPIO_Init(void)
 {
     GPIO_InitTypeDef  GPIO_InitStructure;
 	
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOE, ENABLE);   //使能PORT,PORTG时钟
-	GPIO_SetBits(GPIOE, GPIO_Pin_6 | GPIO_Pin_2);
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_2;
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);   //使能PORT,PORTG时钟
+	GPIO_SetBits(GPIOD, GPIO_Pin_1 | GPIO_Pin_0);
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1 | GPIO_Pin_0;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;           //普通输出模式
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_OD;          //开漏输出
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;      //100MHz
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;            //上拉
-	GPIO_Init(GPIOE, &GPIO_InitStructure);                  //初始化
-	GPIO_SetBits(GPIOE, GPIO_Pin_6 | GPIO_Pin_2);
+	GPIO_Init(GPIOD, &GPIO_InitStructure);                  //初始化
+	GPIO_SetBits(GPIOD, GPIO_Pin_0 | GPIO_Pin_1);
 }
 
 /**
   * @brief  IIC开始信号
-  * @param  None
   * @retval None
   */
 void IIC_Begin(void)
@@ -87,7 +85,6 @@ void IIC_Begin(void)
 
 /**
   * @brief  IIC停止信号
-  * @param  None
   * @retval None
   */
 void IIC_Stop(void)
@@ -101,7 +98,6 @@ void IIC_Stop(void)
 
 /**
   * @brief  IIC等待响应
-  * @param  None
   * @retval None
   */
 bool IIC_WaitAck(void)
@@ -128,7 +124,6 @@ bool IIC_WaitAck(void)
 
 /**
   * @brief  IIC应答
-  * @param  None
   * @retval None
   */
 void IIC_Ack(void)
@@ -144,7 +139,6 @@ void IIC_Ack(void)
 
 /**
   * @brief  IIC非应答
-  * @param  None
   * @retval None
   */
 void IIC_NAck(void)
@@ -159,7 +153,7 @@ void IIC_NAck(void)
 
 /**
   * @brief  IIC发送一个字节
-  * @param  预发送的字节
+  * @param  TXD: 预发送的字节
   * @retval None
   */
 void IIC_WriteByte(uint8_t TXD)
@@ -187,7 +181,7 @@ void IIC_WriteByte(uint8_t TXD)
 
 /**
   * @brief  IIC读一个字节
-  * @param  预发送的字节
+  * @param  ack: 预发送的字节
   * @retval None
   */
 uint8_t IIC_ReadByte(uint8_t ack)
@@ -218,7 +212,9 @@ uint8_t IIC_ReadByte(uint8_t ack)
 
 /**
   * @brief  单字节写入
-  * @param  MPU9250寄存器写入
+  * @param  SlaveAddress: MPU9250寄存器写入
+  * @param  REG_Address: 偏移地址
+  * @param  REG_data: 待写入的数据
   * @retval 是否成功
   */
 bool Single_Write(uint8_t SlaveAddress, uint8_t REG_Address, uint8_t REG_data)		     //void
@@ -230,10 +226,10 @@ bool Single_Write(uint8_t SlaveAddress, uint8_t REG_Address, uint8_t REG_data)		
         IIC_Stop(); 
         return FALSE;
     }
-    IIC_WriteByte(REG_Address);   //设置低起始地址      
-    IIC_WaitAck();	
+    IIC_WriteByte(REG_Address);   //设置低起始地址
+    IIC_WaitAck();
     IIC_WriteByte(REG_data);
-    IIC_WaitAck();   
+    IIC_WaitAck();
     IIC_Stop();
     delay_ms(5);
     return TRUE;
@@ -241,7 +237,8 @@ bool Single_Write(uint8_t SlaveAddress, uint8_t REG_Address, uint8_t REG_data)		
 
 /**
   * @brief  单字节读取
-  * @param  MPU9250寄存器读取
+  * @param  SlaveAddress: MPU9250地址
+  * @param  REG_Address: 偏移地址
   * @retval 读取数据
   */
 uint8_t Single_Read(uint8_t SlaveAddress,uint8_t REG_Address)

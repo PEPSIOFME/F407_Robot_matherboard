@@ -7,6 +7,10 @@
 .\objects\stm32f4xx_cryp_tdes.o: ..\CORE\core_cmFunc.h
 .\objects\stm32f4xx_cryp_tdes.o: ..\CORE\core_cm4_simd.h
 .\objects\stm32f4xx_cryp_tdes.o: ..\CORE\system_stm32f4xx.h
+.\objects\stm32f4xx_cryp_tdes.o: ..\DSP_LIB\Include\arm_math.h
+.\objects\stm32f4xx_cryp_tdes.o: ..\DSP_LIB\Include\core_cm4.h
+.\objects\stm32f4xx_cryp_tdes.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\objects\stm32f4xx_cryp_tdes.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
 .\objects\stm32f4xx_cryp_tdes.o: ..\CORE\stm32f4xx_conf.h
 .\objects\stm32f4xx_cryp_tdes.o: ..\FWLIB\inc\stm32f4xx_adc.h
 .\objects\stm32f4xx_cryp_tdes.o: ..\CORE\stm32f4xx.h

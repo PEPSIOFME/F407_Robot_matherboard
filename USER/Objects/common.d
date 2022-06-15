@@ -7,6 +7,10 @@
 .\objects\common.o: ..\CORE\core_cmFunc.h
 .\objects\common.o: ..\CORE\core_cm4_simd.h
 .\objects\common.o: ..\CORE\system_stm32f4xx.h
+.\objects\common.o: ..\DSP_LIB\Include\arm_math.h
+.\objects\common.o: ..\DSP_LIB\Include\core_cm4.h
+.\objects\common.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\objects\common.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
 .\objects\common.o: ..\CORE\stm32f4xx_conf.h
 .\objects\common.o: ..\FWLIB\inc\stm32f4xx_adc.h
 .\objects\common.o: ..\CORE\stm32f4xx.h

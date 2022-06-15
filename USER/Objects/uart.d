@@ -10,6 +10,10 @@
 .\objects\uart.o: ..\CORE\core_cmFunc.h
 .\objects\uart.o: ..\CORE\core_cm4_simd.h
 .\objects\uart.o: ..\CORE\system_stm32f4xx.h
+.\objects\uart.o: ..\DSP_LIB\Include\arm_math.h
+.\objects\uart.o: ..\DSP_LIB\Include\core_cm4.h
+.\objects\uart.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\objects\uart.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
 .\objects\uart.o: ..\CORE\stm32f4xx_conf.h
 .\objects\uart.o: ..\FWLIB\inc\stm32f4xx_crc.h
 .\objects\uart.o: ..\FWLIB\inc\stm32f4xx_dbgmcu.h

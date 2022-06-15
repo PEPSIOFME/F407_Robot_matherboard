@@ -7,6 +7,10 @@
 .\objects\main.o: ..\CORE\core_cmFunc.h
 .\objects\main.o: ..\CORE\core_cm4_simd.h
 .\objects\main.o: ..\CORE\system_stm32f4xx.h
+.\objects\main.o: ..\DSP_LIB\Include\arm_math.h
+.\objects\main.o: ..\DSP_LIB\Include\core_cm4.h
+.\objects\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\objects\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
 .\objects\main.o: ..\CORE\stm32f4xx_conf.h
 .\objects\main.o: ..\FWLIB\inc\stm32f4xx_adc.h
 .\objects\main.o: ..\CORE\stm32f4xx.h
@@ -43,3 +47,8 @@
 .\objects\main.o: ..\APP\lcd_init.h
 .\objects\main.o: ..\APP\pic.h
 .\objects\main.o: ..\APP\test.h
+.\objects\main.o: ..\APP\servo.h
+.\objects\main.o: ..\APP\timer.h
+.\objects\main.o: ..\APP\kinematic.h
+.\objects\main.o: ..\APP\uart.h
+.\objects\main.o: ..\APP\motor.h

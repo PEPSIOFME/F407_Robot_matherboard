@@ -4,11 +4,11 @@
 #include "common.h"
 #include "stm32f4xx.h"
 
-#define SDA_High GPIO_SetBits(GPIOE, GPIO_Pin_2)
-#define SDA_Low GPIO_ResetBits(GPIOE, GPIO_Pin_2)
-#define SCL_High GPIO_SetBits(GPIOE, GPIO_Pin_6)
-#define SCL_Low GPIO_ResetBits(GPIOE, GPIO_Pin_6)
-#define SDA_Read GPIO_ReadInputDataBit(GPIOE, GPIO_Pin_2)
+#define SDA_High GPIO_SetBits(GPIOD, GPIO_Pin_0)
+#define SDA_Low GPIO_ResetBits(GPIOD, GPIO_Pin_0)
+#define SCL_High GPIO_SetBits(GPIOD, GPIO_Pin_1)
+#define SCL_Low GPIO_ResetBits(GPIOD, GPIO_Pin_1)
+#define SDA_Read GPIO_ReadInputDataBit(GPIOD, GPIO_Pin_0)
 
 extern uint8_t TX_DATA[4];       //显示据缓存区
 extern uint8_t BUF[10];          //接收数据缓存区
