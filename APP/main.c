@@ -4,18 +4,29 @@
 
 int main(void)
 {
+    uint32_t data;
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//设置系统中断优先级分组2
+    MOTOR_Init();
+    MOTOR_PWM_Init(999, 83);
+    TIM_SetCompare1(TIM2, 500);
+    TIM_SetCompare2(TIM2, 500);
+    // HALL_Init(0XFFFF, 0);
+    // while(1)
+    // {
+    //     data = N * 65536 + TIM5->CNT;
+    // }
 
     // IIC_GPIO_Init();
-	// //printf("xxx0\r\n");
+    // //printf("xxx0\r\n");
     // usart1_Init();
     // delay_init();
-    
+
     // PCA9685_Reset();
     // setPWMFreq(50);
 
     // reset_reboot();
-    //delay_ms(1000);
-    //move();
+    // delay_ms(1000);
+    // move();
 //     while (1)
 //     {
 //         printf("ACCEL: ");

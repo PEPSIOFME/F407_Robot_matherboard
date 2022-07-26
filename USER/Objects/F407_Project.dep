@@ -1491,7 +1491,7 @@ I (..\FWLIB\inc\stm32f4xx_dac.h)(0x61D3A6EA)
 I (..\FWLIB\inc\stm32f4xx_dcmi.h)(0x61D3A6EA)
 I (..\FWLIB\inc\stm32f4xx_fsmc.h)(0x61D3A6EA)
 F (..\SYSTEM\common.h)(0x61D3A6EA)()
-F (..\APP\main.c)(0x62A97FEC)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\APP -I ..\CORE -I ..\FWLIB\inc -I ..\SYSTEM -I ..\DSP_LIB\Include -I ..\DSP_LIB --locale=english-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="536" -DSTM32F407xx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -D__TARGET_FPU_VFP -DARM_MATH_CM4-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
+F (..\APP\main.c)(0x62DBB8AD)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\APP -I ..\CORE -I ..\FWLIB\inc -I ..\SYSTEM -I ..\DSP_LIB\Include -I ..\DSP_LIB --locale=english-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="536" -DSTM32F407xx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -D__TARGET_FPU_VFP -DARM_MATH_CM4-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
 I (..\APP\main.h)(0x62A97EAD)
 I (..\CORE\stm32f4xx.h)(0x61F8E50E)
 I (..\CORE\core_cm4.h)(0x61D3A6EA)
@@ -1542,7 +1542,7 @@ I (..\APP\test.h)(0x61EFA536)
 I (..\APP\servo.h)(0x61FA24C4)
 I (..\APP\timer.h)(0x61F77B0C)
 I (..\APP\kinematic.h)(0x61FA25F4)
-I (..\APP\motor.h)(0x62A97FF3)
+I (..\APP\motor.h)(0x62D10332)
 F (..\APP\main.h)(0x62A97EAD)()
 F (..\APP\i2c.c)(0x628EE63D)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\APP -I ..\CORE -I ..\FWLIB\inc -I ..\SYSTEM -I ..\DSP_LIB\Include -I ..\DSP_LIB --locale=english-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="536" -DSTM32F407xx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -D__TARGET_FPU_VFP -DARM_MATH_CM4-o .\objects\i2c.o --omf_browse .\objects\i2c.crf --depend .\objects\i2c.d)
 I (..\APP\i2c.h)(0x61F7AF18)
@@ -1885,8 +1885,8 @@ I (..\APP\servo.h)(0x61FA24C4)
 I (..\APP\i2c.h)(0x61F7AF18)
 I (..\SYSTEM\common.h)(0x61D3A6EA)
 F (..\APP\kinematic.h)(0x61FA25F4)()
-F (..\APP\motor.c)(0x62A9800E)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\APP -I ..\CORE -I ..\FWLIB\inc -I ..\SYSTEM -I ..\DSP_LIB\Include -I ..\DSP_LIB --locale=english-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="536" -DSTM32F407xx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -D__TARGET_FPU_VFP -DARM_MATH_CM4-o .\objects\motor.o --omf_browse .\objects\motor.crf --depend .\objects\motor.d)
-I (..\APP\motor.h)(0x62A97FF3)
+F (..\APP\motor.c)(0x62DBB8C1)(--c99 --gnu -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\APP -I ..\CORE -I ..\FWLIB\inc -I ..\SYSTEM -I ..\DSP_LIB\Include -I ..\DSP_LIB --locale=english-IC:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="536" -DSTM32F407xx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER -D__TARGET_FPU_VFP -DARM_MATH_CM4-o .\objects\motor.o --omf_browse .\objects\motor.crf --depend .\objects\motor.d)
+I (..\APP\motor.h)(0x62D10332)
 I (..\CORE\stm32f4xx.h)(0x61F8E50E)
 I (..\CORE\core_cm4.h)(0x61D3A6EA)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x6025237E)
@@ -1925,4 +1925,4 @@ I (..\FWLIB\inc\stm32f4xx_can.h)(0x61D3A6EA)
 I (..\FWLIB\inc\stm32f4xx_dac.h)(0x61D3A6EA)
 I (..\FWLIB\inc\stm32f4xx_dcmi.h)(0x61D3A6EA)
 I (..\FWLIB\inc\stm32f4xx_fsmc.h)(0x61D3A6EA)
-F (..\APP\motor.h)(0x62A97FF3)()
+F (..\APP\motor.h)(0x62D10332)()
