@@ -1,6 +1,8 @@
 {
     "files.associations": {
-        "TESTV003.C": "cpp",
-        "TESTV03.C": "cpp"
+        "lcd.h": "c",
+        "common.h": "c",
+        "gui.h": "c",
+        "lv_port_disp.h": "c"
     }
 }

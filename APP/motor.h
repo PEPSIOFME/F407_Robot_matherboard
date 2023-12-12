@@ -1,6 +1,6 @@
 #include "stm32f4xx.h"
 
-extern int16_t N;
+extern volatile int16_t N;
 
 #define STBY_ENBLE      GPIO_SetBits(GPIOE, GPIO_Pin_6);
 #define STBY_DISABLE    GPIO_ResetBits(GPIOE, GPIO_Pin_6);

@@ -1,4 +1,4 @@
-#include "usart.h"
+#include "uart.h"
 
 void usart1_Init(void)
 {
@@ -34,8 +34,7 @@ void usart1_Init(void)
 //printf函数重定向
 int fputc(int ch, FILE *f)
 {
-    while ((USART1->SR & 0X40) == 0)
-        ; //循环发送,直到发送完毕
+    while ((USART1->SR & 0X40) == 0); //循环发送,直到发送完毕
     USART1->DR = (u8)ch;
     return ch;
 }

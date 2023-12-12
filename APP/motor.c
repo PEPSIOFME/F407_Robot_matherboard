@@ -59,14 +59,15 @@ void HALL_Init(u32 arr, u32 psc)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
     TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
-    TIM_ICInitTypeDef TIM_ICInitStructure;
+//    TIM_ICInitTypeDef TIM_ICInitStructure;
     NVIC_InitTypeDef NVIC_InitStructure;
+	EXTI_InitTypeDef EXTI_InitStructure;
 
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);  // TIM3时钟使能
     RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE); //使能PORTF时钟
 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2 | GPIO_Pin_3;
-    GPIO_InitStructure.GPIO_OType = GPIO_Mode_IN;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
 
@@ -77,21 +78,18 @@ void HALL_Init(u32 arr, u32 psc)
     TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; //向上计数模式
     TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);             //初始化TIM5
 
-    NVIC_InitTypeDef NVIC_InitStructure;
     NVIC_InitStructure.NVIC_IRQChannel = EXTI2_IRQn;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
 
-    NVIC_InitTypeDef NVIC_InitStructure;
     NVIC_InitStructure.NVIC_IRQChannel = EXTI3_IRQn;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
 
-    EXTI_InitTypeDef EXTI_InitStructure;
     EXTI_InitStructure.EXTI_Line = EXTI_Line2;
     EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
     EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
@@ -115,6 +113,7 @@ void HALL_Init(u32 arr, u32 psc)
 }
 
 volatile int16_t N = 0;
+volatile uint32_t A_MCount = 0;
 void TIM3_IRQHandler(void)
 {
     if (TIM_GetITStatus(TIM5, TIM_IT_Update) == SET) //中断标志位
@@ -128,7 +127,14 @@ void EXTI2_IRQHandler(void)
 {
     if (EXTI_GetITStatus(EXTI_Line2) == 1)
     {
-
+        if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_3))
+        {
+            A_MCount++;
+        }
+        else
+        {
+            
+        }
     }
     EXTI_ClearITPendingBit(EXTI_Line2);
 }
@@ -137,7 +143,14 @@ void EXTI3_IRQHandler(void)
 {
     if (EXTI_GetITStatus(EXTI_Line3) == 1)
     {
+        if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_2))
+        {
 
+        }
+        else
+        {
+
+        }
     }
     EXTI_ClearITPendingBit(EXTI_Line3);
 }

@@ -1,558 +1,492 @@
+//////////////////////////////////////////////////////////////////////////////////
+// 本程序只供学习使用，未经作者许可，不得用于其它任何用途
+// 测试硬件：单片机STM32F407ZGT6,正点原子Explorer STM32F4开发板,主频168MHZ，晶振12MHZ
+// QDtech-TFT液晶驱动 for STM32 IO模拟
+// xiao冯@ShenZhen QDtech co.,LTD
+// 公司网站:www.qdtft.com
+// 淘宝网站：http://qdtech.taobao.com
+// wiki技术网站：http://www.lcdwiki.com
+// 我司提供技术支持，任何技术问题欢迎随时交流学习
+// 固话(传真) :+86 0755-23594567
+// 手机:15989313508（冯工）
+// 邮箱:lcdwiki01@gmail.com    support@lcdwiki.com    goodtft@163.com
+// 技术支持QQ:3002773612  3002778157
+// 技术交流QQ群:324828016
+// 创建日期:2018/08/09
+// 版本：V1.0
+// 版权所有，盗版必究。
+// Copyright(C) 深圳市全动电子技术有限公司 2018-2028
+// All rights reserved
+/****************************************************************************************************
+//=========================================电源接线================================================//
+//     LCD模块                STM32单片机
+//      VCC          接        DC5V/3.3V      //电源
+//      GND          接          GND          //电源地
+//=======================================液晶屏数据线接线==========================================//
+//本模块默认数据总线类型为SPI总线
+//     LCD模块                STM32单片机
+//    SDI(MOSI)      接          PB5          //液晶屏SPI总线数据写信号
+//    SDO(MISO)      接          PB4          //液晶屏SPI总线数据读信号，如果不需要读，可以不接线
+//=======================================液晶屏控制线接线==========================================//
+//     LCD模块 					      STM32单片机
+//       LED         接          PB13         //液晶屏背光控制信号，如果不需要控制，接5V或3.3V
+//       SCK         接          PB3          //液晶屏SPI总线时钟信号
+//     LCD_RS        接          PB14         //液晶屏数据/命令控制信号
+//     LCD_RST       接          PB12         //液晶屏复位控制信号
+//     LCD_CS        接          PB15         //液晶屏片选控制信号
+//=========================================触摸屏触接线=========================================//
+//如果模块不带触摸功能或者带有触摸功能，但是不需要触摸功能，则不需要进行触摸屏接线
+//	   LCD模块                STM32单片机
+//     CTP_INT       接          PB1          //电容触摸屏中断信号
+//     CTP_SDA       接          PF11         //电容触摸屏IIC数据信号
+//     CTP_RST       接          PC5          //电容触摸屏复位信号
+//     CTP_SCL       接          PB0          //电容触摸屏IIC时钟信号
+**************************************************************************************************/
+/* @attention
+ *
+ * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
+ * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
+ * TIME. AS A RESULT, QD electronic SHALL NOT BE HELD LIABLE FOR ANY
+ * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
+ * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
+ * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+ **************************************************************************************************/
 #include "lcd.h"
-#include "lcd_init.h"
-#include "lcdfont.h"
+#include "stdlib.h"
 #include "common.h"
+#include "spi.h"
 
+// 管理LCD重要参数
+// 默认为竖屏
+_lcd_dev lcddev;
 
-/******************************************************************************
-      函数说明：在指定区域填充颜色
-      入口数据：xsta,ysta   起始坐标
-                xend,yend   终止坐标
-								color       要填充的颜色
-      返回值：  无
+// 画笔颜色,背景颜色
+u16 POINT_COLOR = 0x0000, BACK_COLOR = 0xFFFF;
+u16 DeviceCode;
+
+/*****************************************************************************
+ * @name       :void LCD_WR_REG(u8 data)
+ * @date       :2018-08-09
+ * @function   :Write an 8-bit command to the LCD screen
+ * @parameters :data:Command value to be written
+ * @retvalue   :None
+ ******************************************************************************/
+void LCD_WR_REG(u8 data)
+{
+	LCD_CS_CLR;
+	LCD_RS_CLR;
+	SPI_WriteByte(SPI1, data);
+	LCD_CS_SET;
+}
+
+/*****************************************************************************
+ * @name       :void LCD_WR_DATA(u8 data)
+ * @date       :2018-08-09
+ * @function   :Write an 8-bit data to the LCD screen
+ * @parameters :data:data value to be written
+ * @retvalue   :None
+ ******************************************************************************/
+void LCD_WR_DATA(u8 data)
+{
+	LCD_CS_CLR;
+	LCD_RS_SET;
+	SPI_WriteByte(SPI1, data);
+	LCD_CS_SET;
+}
+
+u8 LCD_RD_DATA(void)
+{
+	u8 data;
+	LCD_CS_CLR;
+	LCD_RS_SET;
+	SPI_SetSpeed(SPI1, 0);
+	data = SPI_WriteByte(SPI1, 0xFF);
+	SPI_SetSpeed(SPI1, 1);
+	LCD_CS_SET;
+	return data;
+}
+
+/*****************************************************************************
+ * @name       :void LCD_WriteReg(u8 LCD_Reg, u16 LCD_RegValue)
+ * @date       :2018-08-09
+ * @function   :Write data into registers
+ * @parameters :LCD_Reg:Register address
+				LCD_RegValue:Data to be written
+ * @retvalue   :None
 ******************************************************************************/
-void LCD_Fill(u16 xsta,u16 ysta,u16 xend,u16 yend,u16 color)
-{          
-	u16 i,j; 
-	LCD_Address_Set(xsta,ysta,xend-1,yend-1);//设置显示范围
-	for(i=ysta;i<yend;i++)
-	{													   	 	
-		for(j=xsta;j<xend;j++)
+void LCD_WriteReg(u8 LCD_Reg, u16 LCD_RegValue)
+{
+	LCD_WR_REG(LCD_Reg);
+	LCD_WR_DATA(LCD_RegValue);
+}
+
+u8 LCD_ReadReg(u8 LCD_Reg)
+{
+	LCD_WR_REG(LCD_Reg);
+	return LCD_RD_DATA();
+}
+
+/*****************************************************************************
+ * @name       :void LCD_WriteRAM_Prepare(void)
+ * @date       :2018-08-09
+ * @function   :Write GRAM
+ * @parameters :None
+ * @retvalue   :None
+ ******************************************************************************/
+void LCD_WriteRAM_Prepare(void)
+{
+	LCD_WR_REG(lcddev.wramcmd);
+}
+
+void LCD_ReadRAM_Prepare(void)
+{
+	LCD_WR_REG(lcddev.rramcmd);
+}
+
+/*****************************************************************************
+ * @name       :void Lcd_WriteData_16Bit(u16 Data)
+ * @date       :2018-08-09
+ * @function   :Write an 16-bit command to the LCD screen
+ * @parameters :Data:Data to be written
+ * @retvalue   :None
+ ******************************************************************************/
+void Lcd_WriteData_16Bit(u16 Data)
+{
+	LCD_CS_CLR;
+	LCD_RS_SET;
+	SPI_WriteByte(SPI1, Data >> 8);
+	SPI_WriteByte(SPI1, Data);
+	LCD_CS_SET;
+}
+
+u16 Lcd_ReadData_16Bit(void)
+{
+	u16 r, g;
+	LCD_CS_CLR;
+	LCD_RS_CLR;
+	SPI_WriteByte(SPI1, lcddev.rramcmd);
+	SPI_SetSpeed(SPI1, 0);
+	LCD_RS_SET;
+	SPI_WriteByte(SPI1, 0xFF);
+	r = SPI_WriteByte(SPI1, 0xFF);
+	g = SPI_WriteByte(SPI1, 0xFF);
+	SPI_SetSpeed(SPI1, 1);
+	LCD_CS_SET;
+	r <<= 8;
+	r |= g;
+	return r;
+}
+
+/*****************************************************************************
+ * @name       :void LCD_DrawPoint(u16 x,u16 y)
+ * @date       :2018-08-09
+ * @function   :Write a pixel data at a specified location
+ * @parameters :x:the x coordinate of the pixel
+				y:the y coordinate of the pixel
+ * @retvalue   :None
+******************************************************************************/
+void LCD_DrawPoint(u16 x, u16 y)
+{
+	LCD_SetCursor(x, y); // 设置光标位置
+	Lcd_WriteData_16Bit(POINT_COLOR);
+}
+
+u16 LCD_ReadPoint(u16 x, u16 y)
+{
+	u16 color;
+	LCD_SetCursor(x, y); // 设置光标位置
+	color = Lcd_ReadData_16Bit();
+	return color;
+}
+
+/*****************************************************************************
+ * @name       :void LCD_Clear(u16 Color)
+ * @date       :2018-08-09
+ * @function   :Full screen filled LCD screen
+ * @parameters :color:Filled color
+ * @retvalue   :None
+ ******************************************************************************/
+void LCD_Clear(u16 Color)
+{
+	unsigned int i, m;
+	LCD_SetWindows(0, 0, lcddev.width - 1, lcddev.height - 1);
+	LCD_CS_CLR;
+	LCD_RS_SET;
+	for (i = 0; i < lcddev.height; i++)
+	{
+		for (m = 0; m < lcddev.width; m++)
 		{
-			LCD_WR_DATA(color);
-		}
-	} 					  	    
-}
-
-/******************************************************************************
-      函数说明：在指定位置画点
-      入口数据：x,y 画点坐标
-                color 点的颜色
-      返回值：  无
-******************************************************************************/
-void LCD_DrawPoint(u16 x,u16 y,u16 color)
-{
-	LCD_Address_Set(x,y,x,y);//设置光标位置 
-	LCD_WR_DATA(color);
-} 
-
-
-/******************************************************************************
-      函数说明：画线
-      入口数据：x1,y1   起始坐标
-                x2,y2   终止坐标
-                color   线的颜色
-      返回值：  无
-******************************************************************************/
-void LCD_DrawLine(u16 x1,u16 y1,u16 x2,u16 y2,u16 color)
-{
-	u16 t; 
-	int xerr=0,yerr=0,delta_x,delta_y,distance;
-	int incx,incy,uRow,uCol;
-	delta_x=x2-x1; //计算坐标增量 
-	delta_y=y2-y1;
-	uRow=x1;//画线起点坐标
-	uCol=y1;
-	if(delta_x>0)incx=1; //设置单步方向 
-	else if (delta_x==0)incx=0;//垂直线 
-	else {incx=-1;delta_x=-delta_x;}
-	if(delta_y>0)incy=1;
-	else if (delta_y==0)incy=0;//水平线 
-	else {incy=-1;delta_y=-delta_y;}
-	if(delta_x>delta_y)distance=delta_x; //选取基本增量坐标轴 
-	else distance=delta_y;
-	for(t=0;t<distance+1;t++)
-	{
-		LCD_DrawPoint(uRow,uCol,color);//画点
-		xerr+=delta_x;
-		yerr+=delta_y;
-		if(xerr>distance)
-		{
-			xerr-=distance;
-			uRow+=incx;
-		}
-		if(yerr>distance)
-		{
-			yerr-=distance;
-			uCol+=incy;
+			SPI_WriteByte(SPI1, Color >> 8);
+			SPI_WriteByte(SPI1, Color);
 		}
 	}
+	LCD_CS_SET;
 }
 
-
-/******************************************************************************
-      函数说明：画矩形
-      入口数据：x1,y1   起始坐标
-                x2,y2   终止坐标
-                color   矩形的颜色
-      返回值：  无
-******************************************************************************/
-void LCD_DrawRectangle(u16 x1, u16 y1, u16 x2, u16 y2,u16 color)
+/*****************************************************************************
+ * @name       :void LCD_Clear(u16 Color)
+ * @date       :2018-08-09
+ * @function   :Initialization LCD screen GPIO
+ * @parameters :None
+ * @retvalue   :None
+ ******************************************************************************/
+void LCD_GPIOInit(void)
 {
-	LCD_DrawLine(x1,y1,x2,y1,color);
-	LCD_DrawLine(x1,y1,x1,y2,color);
-	LCD_DrawLine(x1,y2,x2,y2,color);
-	LCD_DrawLine(x2,y1,x2,y2,color);
+	GPIO_InitTypeDef GPIO_InitStructure;
+
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
+
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_10 | GPIO_Pin_11;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT; // 普通输出模式
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP; // 推挽输出
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;   // 上拉
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	LCD_LED = 1; // 点亮背光
 }
 
-
-/******************************************************************************
-      函数说明：画圆
-      入口数据：x0,y0   圆心坐标
-                r       半径
-                color   圆的颜色
-      返回值：  无
-******************************************************************************/
-void Draw_Circle(u16 x0,u16 y0,u8 r,u16 color)
+/*****************************************************************************
+ * @name       :void LCD_RESET(void)
+ * @date       :2018-08-09
+ * @function   :Reset LCD screen
+ * @parameters :None
+ * @retvalue   :None
+ ******************************************************************************/
+void LCD_RESET(void)
 {
-	int a,b;
-	a=0;b=r;	  
-	while(a<=b)
+	LCD_RST_CLR;
+	delay_ms(100);
+	LCD_RST_SET;
+	delay_ms(50);
+}
+
+/*****************************************************************************
+ * @name       :void LCD_RESET(void)
+ * @date       :2018-08-09
+ * @function   :Initialization LCD screen
+ * @parameters :None
+ * @retvalue   :None
+ ******************************************************************************/
+void LCD_Init(void)
+{
+	Flash_SPI_Init(); // 硬件SPI初始化
+	LCD_GPIOInit();	  // LCD GPIO初始化
+	LCD_RESET();	  // LCD 复位
+	//*************3.5 ST7796S IPS初始化**********//
+	LCD_WR_REG(0x11);
+
+	delay_ms(120); // Delay 120ms
+
+	LCD_WR_REG(0x36); // Memory Data Access Control MY,MX~~
+	LCD_WR_DATA(0x48);
+
+	LCD_WR_REG(0x3A);
+	LCD_WR_DATA(0x55); // LCD_WR_DATA(0x66);
+
+	LCD_WR_REG(0xF0); // Command Set Control
+	LCD_WR_DATA(0xC3);
+
+	LCD_WR_REG(0xF0);
+	LCD_WR_DATA(0x96);
+
+	LCD_WR_REG(0xB4);
+	LCD_WR_DATA(0x01);
+
+	LCD_WR_REG(0xB7);
+	LCD_WR_DATA(0xC6);
+
+	// LCD_WR_REG(0xB9);
+	// LCD_WR_DATA(0x02);
+	// LCD_WR_DATA(0xE0);
+
+	LCD_WR_REG(0xC0);
+	LCD_WR_DATA(0x80);
+	LCD_WR_DATA(0x45);
+
+	LCD_WR_REG(0xC1);
+	LCD_WR_DATA(0x13); // 18  //00
+
+	LCD_WR_REG(0xC2);
+	LCD_WR_DATA(0xA7);
+
+	LCD_WR_REG(0xC5);
+	LCD_WR_DATA(0x0A);
+
+	LCD_WR_REG(0xE8);
+	LCD_WR_DATA(0x40);
+	LCD_WR_DATA(0x8A);
+	LCD_WR_DATA(0x00);
+	LCD_WR_DATA(0x00);
+	LCD_WR_DATA(0x29);
+	LCD_WR_DATA(0x19);
+	LCD_WR_DATA(0xA5);
+	LCD_WR_DATA(0x33);
+
+	LCD_WR_REG(0xE0);
+	LCD_WR_DATA(0xD0);
+	LCD_WR_DATA(0x08);
+	LCD_WR_DATA(0x0F);
+	LCD_WR_DATA(0x06);
+	LCD_WR_DATA(0x06);
+	LCD_WR_DATA(0x33);
+	LCD_WR_DATA(0x30);
+	LCD_WR_DATA(0x33);
+	LCD_WR_DATA(0x47);
+	LCD_WR_DATA(0x17);
+	LCD_WR_DATA(0x13);
+	LCD_WR_DATA(0x13);
+	LCD_WR_DATA(0x2B);
+	LCD_WR_DATA(0x31);
+
+	LCD_WR_REG(0xE1);
+	LCD_WR_DATA(0xD0);
+	LCD_WR_DATA(0x0A);
+	LCD_WR_DATA(0x11);
+	LCD_WR_DATA(0x0B);
+	LCD_WR_DATA(0x09);
+	LCD_WR_DATA(0x07);
+	LCD_WR_DATA(0x2F);
+	LCD_WR_DATA(0x33);
+	LCD_WR_DATA(0x47);
+	LCD_WR_DATA(0x38);
+	LCD_WR_DATA(0x15);
+	LCD_WR_DATA(0x16);
+	LCD_WR_DATA(0x2C);
+	LCD_WR_DATA(0x32);
+
+	LCD_WR_REG(0xF0);
+	LCD_WR_DATA(0x3C);
+
+	LCD_WR_REG(0xF0);
+	LCD_WR_DATA(0x69);
+
+	delay_ms(120);
+
+	LCD_WR_REG(0x21);
+
+	LCD_WR_REG(0x29);
+
+	LCD_direction(USE_HORIZONTAL); // 设置LCD显示方向
+	LCD_Clear(WHITE);			   // 清全屏白色
+}
+
+/*****************************************************************************
+ * @name       :void LCD_SetWindows(u16 xStar, u16 yStar,u16 xEnd,u16 yEnd)
+ * @date       :2018-08-09
+ * @function   :Setting LCD display window
+ * @parameters :xStar:the bebinning x coordinate of the LCD display window
+								yStar:the bebinning y coordinate of the LCD display window
+								xEnd:the endning x coordinate of the LCD display window
+								yEnd:the endning y coordinate of the LCD display window
+ * @retvalue   :None
+******************************************************************************/
+void LCD_SetWindows(u16 xStar, u16 yStar, u16 xEnd, u16 yEnd)
+{
+	LCD_WR_REG(lcddev.setxcmd);
+	LCD_WR_DATA(xStar >> 8);
+	LCD_WR_DATA(0x00FF & xStar);
+	LCD_WR_DATA(xEnd >> 8);
+	LCD_WR_DATA(0x00FF & xEnd);
+
+	LCD_WR_REG(lcddev.setycmd);
+	LCD_WR_DATA(yStar >> 8);
+	LCD_WR_DATA(0x00FF & yStar);
+	LCD_WR_DATA(yEnd >> 8);
+	LCD_WR_DATA(0x00FF & yEnd);
+
+	LCD_WriteRAM_Prepare(); // 开始写入GRAM
+}
+
+/*****************************************************************************
+ * @name       :void LCD_SetCursor(u16 Xpos, u16 Ypos)
+ * @date       :2018-08-09
+ * @function   :Set coordinate value
+ * @parameters :Xpos:the  x coordinate of the pixel
+								Ypos:the  y coordinate of the pixel
+ * @retvalue   :None
+******************************************************************************/
+void LCD_SetCursor(u16 Xpos, u16 Ypos)
+{
+	LCD_SetWindows(Xpos, Ypos, Xpos, Ypos);
+}
+
+/*****************************************************************************
+ * @name       :void LCD_direction(u8 direction)
+ * @date       :2018-08-09
+ * @function   :Setting the display direction of LCD screen
+ * @parameters :direction:0-0 degree
+						  1-90 degree
+													2-180 degree
+													3-270 degree
+ * @retvalue   :None
+******************************************************************************/
+void LCD_direction(u8 direction)
+{
+	lcddev.setxcmd = 0x2A;
+	lcddev.setycmd = 0x2B;
+	lcddev.wramcmd = 0x2C;
+	lcddev.rramcmd = 0x2E;
+	lcddev.dir = direction % 4;
+	switch (lcddev.dir)
 	{
-		LCD_DrawPoint(x0-b,y0-a,color);             //3           
-		LCD_DrawPoint(x0+b,y0-a,color);             //0           
-		LCD_DrawPoint(x0-a,y0+b,color);             //1                
-		LCD_DrawPoint(x0-a,y0-b,color);             //2             
-		LCD_DrawPoint(x0+b,y0+a,color);             //4               
-		LCD_DrawPoint(x0+a,y0-b,color);             //5
-		LCD_DrawPoint(x0+a,y0+b,color);             //6 
-		LCD_DrawPoint(x0-b,y0+a,color);             //7
-		a++;
-		if((a*a+b*b)>(r*r))//判断要画的点是否过远
-		{
-			b--;
-		}
+	case 0:
+		lcddev.width = LCD_W;
+		lcddev.height = LCD_H;
+		LCD_WriteReg(0x36, (1 << 3) | (1 << 6));
+		break;
+	case 1:
+		lcddev.width = LCD_H;
+		lcddev.height = LCD_W;
+		LCD_WriteReg(0x36, (1 << 3) | (1 << 5));
+		break;
+	case 2:
+		lcddev.width = LCD_W;
+		lcddev.height = LCD_H;
+		LCD_WriteReg(0x36, (1 << 3) | (1 << 7));
+		break;
+	case 3:
+		lcddev.width = LCD_H;
+		lcddev.height = LCD_W;
+		LCD_WriteReg(0x36, (1 << 3) | (1 << 7) | (1 << 6) | (1 << 5));
+		break;
+	default:
+		break;
 	}
 }
 
-/******************************************************************************
-      函数说明：显示汉字串
-      入口数据：x,y显示坐标
-                *s 要显示的汉字串
-                fc 字的颜色
-                bc 字的背景色
-                sizey 字号 可选 16 24 32
-                mode:  0非叠加模式  1叠加模式
-      返回值：  无
-******************************************************************************/
-void LCD_ShowChinese(u16 x,u16 y,u8 *s,u16 fc,u16 bc,u8 sizey,u8 mode)
+u16 LCD_Read_ID(void)
 {
-	while(*s!=0)
+	u8 i, val[3] = {0};
+	LCD_WR_REG(0xF0); // Command Set Control
+	LCD_WR_DATA(0xC3);
+
+	LCD_WR_REG(0xF0);
+	LCD_WR_DATA(0x96);
+	LCD_CS_CLR;
+	for (i = 1; i < 4; i++)
 	{
-		if(sizey==12) LCD_ShowChinese12x12(x,y,s,fc,bc,sizey,mode);
-		else if(sizey==16) LCD_ShowChinese16x16(x,y,s,fc,bc,sizey,mode);
-		else if(sizey==24) LCD_ShowChinese24x24(x,y,s,fc,bc,sizey,mode);
-		else if(sizey==32) LCD_ShowChinese32x32(x,y,s,fc,bc,sizey,mode);
-		else return;
-		s+=2;
-		x+=sizey;
+		LCD_RS_CLR;
+		SPI_WriteByte(SPI1, 0xFB);
+		LCD_RS_SET;
+		SPI_WriteByte(SPI1, 0x10 + i);
+		LCD_RS_CLR;
+		SPI_WriteByte(SPI1, 0xD3);
+		SPI_SetSpeed(SPI1, 0);
+		LCD_RS_SET;
+		val[i - 1] = SPI_WriteByte(SPI1, 0xFF);
+		SPI_SetSpeed(SPI1, 1);
+		LCD_RS_CLR;
+		SPI_WriteByte(SPI1, 0xFB);
+		LCD_RS_SET;
+		SPI_WriteByte(SPI1, 0x00);
 	}
+	LCD_CS_SET;
+	LCD_WR_REG(0xF0); // Command Set Control
+	LCD_WR_DATA(0x3C);
+	LCD_WR_REG(0xF0);
+	LCD_WR_DATA(0x69);
+	lcddev.id = val[1];
+	lcddev.id <<= 8;
+	lcddev.id |= val[2];
+	return lcddev.id;
 }
-
-/******************************************************************************
-      函数说明：显示单个12x12汉字
-      入口数据：x,y显示坐标
-                *s 要显示的汉字
-                fc 字的颜色
-                bc 字的背景色
-                sizey 字号
-                mode:  0非叠加模式  1叠加模式
-      返回值：  无
-******************************************************************************/
-void LCD_ShowChinese12x12(u16 x,u16 y,u8 *s,u16 fc,u16 bc,u8 sizey,u8 mode)
-{
-	u8 i,j,m=0;
-	u16 k;
-	u16 HZnum;//汉字数目
-	u16 TypefaceNum;//一个字符所占字节大小
-	u16 x0=x;
-	TypefaceNum=(sizey/8+((sizey%8)?1:0))*sizey;
-	                         
-	HZnum=sizeof(tfont12)/sizeof(typFNT_GB12);	//统计汉字数目
-	for(k=0;k<HZnum;k++) 
-	{
-		if((tfont12[k].Index[0]==*(s))&&(tfont12[k].Index[1]==*(s+1)))
-		{ 	
-			LCD_Address_Set(x,y,x+sizey-1,y+sizey-1);
-			for(i=0;i<TypefaceNum;i++)
-			{
-				for(j=0;j<8;j++)
-				{	
-					if(!mode)//非叠加方式
-					{
-						if(tfont12[k].Msk[i]&(0x01<<j))LCD_WR_DATA(fc);
-						else LCD_WR_DATA(bc);
-						m++;
-						if(m%sizey==0)
-						{
-							m=0;
-							break;
-						}
-					}
-					else//叠加方式
-					{
-						if(tfont12[k].Msk[i]&(0x01<<j))	LCD_DrawPoint(x,y,fc);//画一个点
-						x++;
-						if((x-x0)==sizey)
-						{
-							x=x0;
-							y++;
-							break;
-						}
-					}
-				}
-			}
-		}				  	
-		continue;  //查找到对应点阵字库立即退出，防止多个汉字重复取模带来影响
-	}
-} 
-
-/******************************************************************************
-      函数说明：显示单个16x16汉字
-      入口数据：x,y显示坐标
-                *s 要显示的汉字
-                fc 字的颜色
-                bc 字的背景色
-                sizey 字号
-                mode:  0非叠加模式  1叠加模式
-      返回值：  无
-******************************************************************************/
-void LCD_ShowChinese16x16(u16 x,u16 y,u8 *s,u16 fc,u16 bc,u8 sizey,u8 mode)
-{
-	u8 i,j,m=0;
-	u16 k;
-	u16 HZnum;//汉字数目
-	u16 TypefaceNum;//一个字符所占字节大小
-	u16 x0=x;
-  TypefaceNum=(sizey/8+((sizey%8)?1:0))*sizey;
-	HZnum=sizeof(tfont16)/sizeof(typFNT_GB16);	//统计汉字数目
-	for(k=0;k<HZnum;k++) 
-	{
-		if ((tfont16[k].Index[0]==*(s))&&(tfont16[k].Index[1]==*(s+1)))
-		{ 	
-			LCD_Address_Set(x,y,x+sizey-1,y+sizey-1);
-			for(i=0;i<TypefaceNum;i++)
-			{
-				for(j=0;j<8;j++)
-				{	
-					if(!mode)//非叠加方式
-					{
-						if(tfont16[k].Msk[i]&(0x01<<j))LCD_WR_DATA(fc);
-						else LCD_WR_DATA(bc);
-						m++;
-						if(m%sizey==0)
-						{
-							m=0;
-							break;
-						}
-					}
-					else//叠加方式
-					{
-						if(tfont16[k].Msk[i]&(0x01<<j))	LCD_DrawPoint(x,y,fc);//画一个点
-						x++;
-						if((x-x0)==sizey)
-						{
-							x=x0;
-							y++;
-							break;
-						}
-					}
-				}
-			}
-		}				  	
-		continue;  //查找到对应点阵字库立即退出，防止多个汉字重复取模带来影响
-	}
-} 
-
-
-/******************************************************************************
-      函数说明：显示单个24x24汉字
-      入口数据：x,y显示坐标
-                *s 要显示的汉字
-                fc 字的颜色
-                bc 字的背景色
-                sizey 字号
-                mode:  0非叠加模式  1叠加模式
-      返回值：  无
-******************************************************************************/
-void LCD_ShowChinese24x24(u16 x,u16 y,u8 *s,u16 fc,u16 bc,u8 sizey,u8 mode)
-{
-	u8 i,j,m=0;
-	u16 k;
-	u16 HZnum;//汉字数目
-	u16 TypefaceNum;//一个字符所占字节大小
-	u16 x0=x;
-	TypefaceNum=(sizey/8+((sizey%8)?1:0))*sizey;
-	HZnum=sizeof(tfont24)/sizeof(typFNT_GB24);	//统计汉字数目
-	for(k=0;k<HZnum;k++) 
-	{
-		if ((tfont24[k].Index[0]==*(s))&&(tfont24[k].Index[1]==*(s+1)))
-		{ 	
-			LCD_Address_Set(x,y,x+sizey-1,y+sizey-1);
-			for(i=0;i<TypefaceNum;i++)
-			{
-				for(j=0;j<8;j++)
-				{	
-					if(!mode)//非叠加方式
-					{
-						if(tfont24[k].Msk[i]&(0x01<<j))LCD_WR_DATA(fc);
-						else LCD_WR_DATA(bc);
-						m++;
-						if(m%sizey==0)
-						{
-							m=0;
-							break;
-						}
-					}
-					else//叠加方式
-					{
-						if(tfont24[k].Msk[i]&(0x01<<j))	LCD_DrawPoint(x,y,fc);//画一个点
-						x++;
-						if((x-x0)==sizey)
-						{
-							x=x0;
-							y++;
-							break;
-						}
-					}
-				}
-			}
-		}				  	
-		continue;  //查找到对应点阵字库立即退出，防止多个汉字重复取模带来影响
-	}
-} 
-
-/******************************************************************************
-      函数说明：显示单个32x32汉字
-      入口数据：x,y显示坐标
-                *s 要显示的汉字
-                fc 字的颜色
-                bc 字的背景色
-                sizey 字号
-                mode:  0非叠加模式  1叠加模式
-      返回值：  无
-******************************************************************************/
-void LCD_ShowChinese32x32(u16 x,u16 y,u8 *s,u16 fc,u16 bc,u8 sizey,u8 mode)
-{
-	u8 i,j,m=0;
-	u16 k;
-	u16 HZnum;//汉字数目
-	u16 TypefaceNum;//一个字符所占字节大小
-	u16 x0=x;
-	TypefaceNum=(sizey/8+((sizey%8)?1:0))*sizey;
-	HZnum=sizeof(tfont32)/sizeof(typFNT_GB32);	//统计汉字数目
-	for(k=0;k<HZnum;k++) 
-	{
-		if ((tfont32[k].Index[0]==*(s))&&(tfont32[k].Index[1]==*(s+1)))
-		{ 	
-			LCD_Address_Set(x,y,x+sizey-1,y+sizey-1);
-			for(i=0;i<TypefaceNum;i++)
-			{
-				for(j=0;j<8;j++)
-				{	
-					if(!mode)//非叠加方式
-					{
-						if(tfont32[k].Msk[i]&(0x01<<j))LCD_WR_DATA(fc);
-						else LCD_WR_DATA(bc);
-						m++;
-						if(m%sizey==0)
-						{
-							m=0;
-							break;
-						}
-					}
-					else//叠加方式
-					{
-						if(tfont32[k].Msk[i]&(0x01<<j))	LCD_DrawPoint(x,y,fc);//画一个点
-						x++;
-						if((x-x0)==sizey)
-						{
-							x=x0;
-							y++;
-							break;
-						}
-					}
-				}
-			}
-		}				  	
-		continue;  //查找到对应点阵字库立即退出，防止多个汉字重复取模带来影响
-	}
-}
-
-
-/******************************************************************************
-      函数说明：显示单个字符
-      入口数据：x,y显示坐标
-                num 要显示的字符
-                fc 字的颜色
-                bc 字的背景色
-                sizey 字号
-                mode:  0非叠加模式  1叠加模式
-      返回值：  无
-******************************************************************************/
-void LCD_ShowChar(u16 x,u16 y,u8 num,u16 fc,u16 bc,u8 sizey,u8 mode)
-{
-	u8 temp,sizex,t,m=0;
-	u16 i,TypefaceNum;//一个字符所占字节大小
-	u16 x0=x;
-	sizex=sizey/2;
-	TypefaceNum=(sizex/8+((sizex%8)?1:0))*sizey;
-	num=num-' ';    //得到偏移后的值
-	LCD_Address_Set(x,y,x+sizex-1,y+sizey-1);  //设置光标位置 
-	for(i=0;i<TypefaceNum;i++)
-	{ 
-		if(sizey==12)temp=ascii_1206[num][i];		       //调用6x12字体
-		else if(sizey==16)temp=ascii_1608[num][i];		 //调用8x16字体
-		else if(sizey==24)temp=ascii_2412[num][i];		 //调用12x24字体
-		else if(sizey==32)temp=ascii_3216[num][i];		 //调用16x32字体
-		else return;
-		for(t=0;t<8;t++)
-		{
-			if(!mode)//非叠加模式
-			{
-				if(temp&(0x01<<t))LCD_WR_DATA(fc);
-				else LCD_WR_DATA(bc);
-				m++;
-				if(m%sizex==0)
-				{
-					m=0;
-					break;
-				}
-			}
-			else//叠加模式
-			{
-				if(temp&(0x01<<t))LCD_DrawPoint(x,y,fc);//画一个点
-				x++;
-				if((x-x0)==sizex)
-				{
-					x=x0;
-					y++;
-					break;
-				}
-			}
-		}
-	}   	 	  
-}
-
-
-/******************************************************************************
-      函数说明：显示字符串
-      入口数据：x,y显示坐标
-                *p 要显示的字符串
-                fc 字的颜色
-                bc 字的背景色
-                sizey 字号
-                mode:  0非叠加模式  1叠加模式
-      返回值：  无
-******************************************************************************/
-void LCD_ShowString(u16 x,u16 y,const u8 *p,u16 fc,u16 bc,u8 sizey,u8 mode)
-{         
-	while(*p!='\0')
-	{       
-		LCD_ShowChar(x,y,*p,fc,bc,sizey,mode);
-		x+=sizey/2;
-		p++;
-	}  
-}
-
-
-/******************************************************************************
-      函数说明：显示数字
-      入口数据：m底数，n指数
-      返回值：  无
-******************************************************************************/
-u32 mypow(u8 m,u8 n)
-{
-	u32 result=1;	 
-	while(n--)result*=m;
-	return result;
-}
-
-
-/******************************************************************************
-      函数说明：显示整数变量
-      入口数据：x,y显示坐标
-                num 要显示整数变量
-                len 要显示的位数
-                fc 字的颜色
-                bc 字的背景色
-                sizey 字号
-      返回值：  无
-******************************************************************************/
-void LCD_ShowIntNum(u16 x,u16 y,u16 num,u8 len,u16 fc,u16 bc,u8 sizey)
-{         	
-	u8 t,temp;
-	u8 enshow=0;
-	u8 sizex=sizey/2;
-	for(t=0;t<len;t++)
-	{
-		temp=(num/mypow(10,len-t-1))%10;
-		if(enshow==0&&t<(len-1))
-		{
-			if(temp==0)
-			{
-				LCD_ShowChar(x+t*sizex,y,' ',fc,bc,sizey,0);
-				continue;
-			}else enshow=1; 
-		 	 
-		}
-	 	LCD_ShowChar(x+t*sizex,y,temp+48,fc,bc,sizey,0);
-	}
-} 
-
-
-/******************************************************************************
-      函数说明：显示两位小数变量
-      入口数据：x,y显示坐标
-                num 要显示小数变量
-                len 要显示的位数
-                fc 字的颜色
-                bc 字的背景色
-                sizey 字号
-      返回值：  无
-******************************************************************************/
-void LCD_ShowFloatNum1(u16 x,u16 y,float num,u8 len,u16 fc,u16 bc,u8 sizey)
-{         	
-	u8 t,temp,sizex;
-	u16 num1;
-	sizex=sizey/2;
-	num1=num*100;
-	for(t=0;t<len;t++)
-	{
-		temp=(num1/mypow(10,len-t-1))%10;
-		if(t==(len-2))
-		{
-			LCD_ShowChar(x+(len-2)*sizex,y,'.',fc,bc,sizey,0);
-			t++;
-			len+=1;
-		}
-	 	LCD_ShowChar(x+t*sizex,y,temp+48,fc,bc,sizey,0);
-	}
-}
-
-
-/******************************************************************************
-      函数说明：显示图片
-      入口数据：x,y起点坐标
-                length 图片长度
-                width  图片宽度
-                pic[]  图片数组    
-      返回值：  无
-******************************************************************************/
-void LCD_ShowPicture(u16 x,u16 y,u16 length,u16 width,const u8 pic[])
-{
-	u16 i,j;
-	u32 k=0;
-	LCD_Address_Set(x,y,x+length-1,y+width-1);
-	for(i=0;i<length;i++)
-	{
-		for(j=0;j<width;j++)
-		{
-			LCD_WR_DATA8(pic[k*2]);
-			LCD_WR_DATA8(pic[k*2+1]);
-			k++;
-		}
-	}			
-}
-
-

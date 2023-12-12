@@ -1,8 +1,5 @@
 .\objects\uart.o: ..\APP\uart.c
-.\objects\uart.o: ..\SYSTEM\usart.h
-.\objects\uart.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
-.\objects\uart.o: ..\CORE\stm32f4xx_conf.h
-.\objects\uart.o: ..\FWLIB\inc\stm32f4xx_adc.h
+.\objects\uart.o: ..\APP\uart.h
 .\objects\uart.o: ..\CORE\stm32f4xx.h
 .\objects\uart.o: ..\CORE\core_cm4.h
 .\objects\uart.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
@@ -15,6 +12,8 @@
 .\objects\uart.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 .\objects\uart.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
 .\objects\uart.o: ..\CORE\stm32f4xx_conf.h
+.\objects\uart.o: ..\FWLIB\inc\stm32f4xx_adc.h
+.\objects\uart.o: ..\CORE\stm32f4xx.h
 .\objects\uart.o: ..\FWLIB\inc\stm32f4xx_crc.h
 .\objects\uart.o: ..\FWLIB\inc\stm32f4xx_dbgmcu.h
 .\objects\uart.o: ..\FWLIB\inc\stm32f4xx_dma.h
@@ -40,4 +39,4 @@
 .\objects\uart.o: ..\FWLIB\inc\stm32f4xx_dac.h
 .\objects\uart.o: ..\FWLIB\inc\stm32f4xx_dcmi.h
 .\objects\uart.o: ..\FWLIB\inc\stm32f4xx_fsmc.h
-.\objects\uart.o: ..\SYSTEM\common.h
+.\objects\uart.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h

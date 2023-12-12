@@ -40,5 +40,5 @@
 .\objects\lcd.o: ..\FWLIB\inc\stm32f4xx_dac.h
 .\objects\lcd.o: ..\FWLIB\inc\stm32f4xx_dcmi.h
 .\objects\lcd.o: ..\FWLIB\inc\stm32f4xx_fsmc.h
-.\objects\lcd.o: ..\APP\lcd_init.h
-.\objects\lcd.o: ..\APP\lcdfont.h
+.\objects\lcd.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+.\objects\lcd.o: ..\APP\spi.h

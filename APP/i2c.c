@@ -56,7 +56,7 @@ short T_X,T_Y,T_Z,T_T;		//X,Y,Z轴，温度
   */
 void IIC_GPIO_Init(void)
 {
-    GPIO_InitTypeDef  GPIO_InitStructure;
+  GPIO_InitTypeDef  GPIO_InitStructure;
 	
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);   //使能PORT,PORTG时钟
 	GPIO_SetBits(GPIOD, GPIO_Pin_1 | GPIO_Pin_0);

@@ -1,5 +1,8 @@
 .\objects\test.o: ..\APP\test.c
-.\objects\test.o: ..\APP\test.h
+.\objects\test.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\objects\test.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\objects\test.o: ..\APP\lcd.h
+.\objects\test.o: ..\SYSTEM\common.h
 .\objects\test.o: ..\CORE\stm32f4xx.h
 .\objects\test.o: ..\CORE\core_cm4.h
 .\objects\test.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
@@ -9,7 +12,6 @@
 .\objects\test.o: ..\CORE\system_stm32f4xx.h
 .\objects\test.o: ..\DSP_LIB\Include\arm_math.h
 .\objects\test.o: ..\DSP_LIB\Include\core_cm4.h
-.\objects\test.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 .\objects\test.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
 .\objects\test.o: ..\CORE\stm32f4xx_conf.h
 .\objects\test.o: ..\FWLIB\inc\stm32f4xx_adc.h
@@ -39,4 +41,7 @@
 .\objects\test.o: ..\FWLIB\inc\stm32f4xx_dac.h
 .\objects\test.o: ..\FWLIB\inc\stm32f4xx_dcmi.h
 .\objects\test.o: ..\FWLIB\inc\stm32f4xx_fsmc.h
-.\objects\test.o: ..\SYSTEM\common.h
+.\objects\test.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+.\objects\test.o: ..\APP\gui.h
+.\objects\test.o: ..\APP\test.h
+.\objects\test.o: ..\APP\pic.h
