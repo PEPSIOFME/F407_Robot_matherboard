@@ -29,29 +29,37 @@ void TIMER2_Init(u16 arr, u16 psc) //TIM2配置，arr为重加载值，psc为预
     TIM_Cmd(TIM2, ENABLE);                     //使能TIM2 总中断
 }
 
+// void TIM2_IRQHandler(void)
+// {
+//     if(i <= 5)
+//     {
+//         GPIO_SetBits(GPIOD, GPIO_Pin_1);
+//         i++;
+//     }
+//     else if(i <= flag)
+//     {
+//         GPIO_SetBits(GPIOD, GPIO_Pin_1);
+//         i++;
+//     }
+//     else if(i <= 199)
+//     {
+//         GPIO_ResetBits(GPIOD, GPIO_Pin_1);
+//         i++;
+//     }
+//     else
+//     {
+//         i = 0;
+//     }
+    
+//     TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+// }
+
+//定时器2中断服务函数
 void TIM2_IRQHandler(void)
 {
-    if(i <= 5)
-    {
-        GPIO_SetBits(GPIOD, GPIO_Pin_1);
-        i++;
-    }
-    else if(i <= flag)
-    {
-        GPIO_SetBits(GPIOD, GPIO_Pin_1);
-        i++;
-    }
-    else if(i <= 199)
-    {
-        GPIO_ResetBits(GPIOD, GPIO_Pin_1);
-        i++;
-    }
-    else
-    {
-        i = 0;
-    }
-    
-    TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+	if(TIM_GetITStatus(TIM2,TIM_IT_Update)==SET) //溢出中断
+	{
+
+	}
+	TIM_ClearITPendingBit(TIM2,TIM_IT_Update);  //清除中断标志位
 }
-
-

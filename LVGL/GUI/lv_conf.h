@@ -49,7 +49,7 @@
 #define LV_MEM_CUSTOM 0
 #if LV_MEM_CUSTOM == 0
     /*Size of the memory available for `lv_mem_alloc()` in bytes (>= 2kB)*/
-    #define LV_MEM_SIZE (48U * 1024U)          /*[bytes]*/
+    #define LV_MEM_SIZE (20U * 1024U)          /*[bytes]*/
 
     /*Set an address for the memory pool instead of allocating it as a normal array. Can be in external SRAM too.*/
     #define LV_MEM_ADR 0     /*0: unused*/
@@ -336,7 +336,7 @@
 #define LV_FONT_MONTSERRAT_24 0
 #define LV_FONT_MONTSERRAT_26 0
 #define LV_FONT_MONTSERRAT_28 0
-#define LV_FONT_MONTSERRAT_30 0
+#define LV_FONT_MONTSERRAT_30 1
 #define LV_FONT_MONTSERRAT_32 0
 #define LV_FONT_MONTSERRAT_34 0
 #define LV_FONT_MONTSERRAT_36 0
@@ -345,7 +345,7 @@
 #define LV_FONT_MONTSERRAT_42 0
 #define LV_FONT_MONTSERRAT_44 0
 #define LV_FONT_MONTSERRAT_46 0
-#define LV_FONT_MONTSERRAT_48 0
+#define LV_FONT_MONTSERRAT_48 1
 
 /*Demonstrate special features*/
 #define LV_FONT_MONTSERRAT_12_SUBPX      0
@@ -662,16 +662,16 @@
 *==================*/
 
 /*Enable the examples to be built with the library*/
-#define LV_BUILD_EXAMPLES 1
+#define LV_BUILD_EXAMPLES 0
 
 /*===================
  * DEMO USAGE
  ====================*/
 
 /*Show some widget. It might be required to increase `LV_MEM_SIZE` */
-#define LV_USE_DEMO_WIDGETS        1
+#define LV_USE_DEMO_WIDGETS        0
 #if LV_USE_DEMO_WIDGETS
-#define LV_DEMO_WIDGETS_SLIDESHOW  1
+#define LV_DEMO_WIDGETS_SLIDESHOW  0
 #endif
 
 /*Demonstrate the usage of encoder and keyboard*/

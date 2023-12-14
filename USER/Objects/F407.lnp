@@ -52,6 +52,8 @@
 ".\objects\flash.o"
 ".\objects\spi.o"
 ".\objects\gui.o"
+".\objects\key.o"
+".\objects\rtc.o"
 ".\objects\lv_port_disp.o"
 ".\objects\lv_port_indev.o"
 ".\objects\lv_disp.o"

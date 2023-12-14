@@ -15,4 +15,8 @@
 #define KEY2_DATA	3
 #define KEY3_DATA   4
 
+void KEY4_Init(void);
+uint8_t KEY_Scan(uint8_t mode);
+
 #endif
+

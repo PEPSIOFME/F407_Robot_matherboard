@@ -178,7 +178,8 @@
 .\objects\main.o: ..\LVGL\GUI\src/extra/libs/rlottie/lv_rlottie.h
 .\objects\main.o: ..\LVGL\GUI\src/extra/libs/ffmpeg/lv_ffmpeg.h
 .\objects\main.o: ..\LVGL\GUI\porting\lv_port_disp.h
-.\objects\main.o: ..\LVGL\GUI_APP\demos\lv_demos.h
-.\objects\main.o: ..\LVGL\GUI_APP\demos\widgets\lv_demo_widgets.h
-.\objects\main.o: ..\LVGL\GUI_APP\demos\widgets\../lv_demos.h
+.\objects\main.o: ..\LVGL\GUI\porting\lv_port_indev.h
 .\objects\main.o: ..\APP\GUI.h
+.\objects\main.o: ..\APP\key.h
+.\objects\main.o: ..\APP\main.h
+.\objects\main.o: ..\APP\rtc.h

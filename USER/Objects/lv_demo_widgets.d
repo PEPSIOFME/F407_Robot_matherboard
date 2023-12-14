@@ -125,4 +125,3 @@
 .\objects\lv_demo_widgets.o: ..\LVGL\GUI\src/extra/libs/freetype/lv_freetype.h
 .\objects\lv_demo_widgets.o: ..\LVGL\GUI\src/extra/libs/rlottie/lv_rlottie.h
 .\objects\lv_demo_widgets.o: ..\LVGL\GUI\src/extra/libs/ffmpeg/lv_ffmpeg.h
-.\objects\lv_demo_widgets.o: ..\LVGL\GUI_APP\demos\widgets\lv_demo_widgets.h

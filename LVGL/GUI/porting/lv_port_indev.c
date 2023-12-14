@@ -23,7 +23,7 @@
 /**********************
  *  STATIC PROTOTYPES
  **********************/
-
+#if 0
 static void touchpad_init(void);
 static void touchpad_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data);
 static bool touchpad_is_pressed(void);
@@ -34,10 +34,6 @@ static void mouse_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data);
 static bool mouse_is_pressed(void);
 static void mouse_get_xy(lv_coord_t * x, lv_coord_t * y);
 
-static void keypad_init(void);
-static void keypad_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data);
-static uint32_t keypad_get_key(void);
-
 static void encoder_init(void);
 static void encoder_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data);
 static void encoder_handler(void);
@@ -46,18 +42,23 @@ static void button_init(void);
 static void button_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data);
 static int8_t button_get_pressed_id(void);
 static bool button_is_pressed(uint8_t id);
+#endif
+
+static void keypad_init(void);
+static void keypad_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data);
+static uint32_t keypad_get_key(void);
 
 /**********************
  *  STATIC VARIABLES
  **********************/
-lv_indev_t * indev_touchpad;
-lv_indev_t * indev_mouse;
+// lv_indev_t * indev_touchpad;
+// lv_indev_t * indev_mouse;
 lv_indev_t * indev_keypad;
-lv_indev_t * indev_encoder;
-lv_indev_t * indev_button;
+// lv_indev_t * indev_encoder;
+// lv_indev_t * indev_button;
 
-static int32_t encoder_diff;
-static lv_indev_state_t encoder_state;
+// static int32_t encoder_diff;
+// static lv_indev_state_t encoder_state;
 
 /**********************
  *      MACROS
@@ -113,7 +114,7 @@ void lv_port_indev_init(void)
     lv_obj_t * mouse_cursor = lv_img_create(lv_scr_act());
     lv_img_set_src(mouse_cursor, LV_SYMBOL_HOME);
     lv_indev_set_cursor(indev_mouse, mouse_cursor);
-
+#endif
     /*------------------
      * Keypad
      * -----------------*/
@@ -131,7 +132,7 @@ void lv_port_indev_init(void)
      *add objects to the group with `lv_group_add_obj(group, obj)`
      *and assign this input device to group to navigate in it:
      *`lv_indev_set_group(indev_keypad, group);`*/
-
+#if 0
     /*------------------
      * Encoder
      * -----------------*/
@@ -149,7 +150,7 @@ void lv_port_indev_init(void)
      *add objects to the group with `lv_group_add_obj(group, obj)`
      *and assign this input device to group to navigate in it:
      *`lv_indev_set_group(indev_encoder, group);`*/
-#endif
+
     /*------------------
      * Button
      * -----------------*/
@@ -169,6 +170,7 @@ void lv_port_indev_init(void)
             {40, 100},  /*Button 1 -> x:40; y:100*/
     };
     lv_indev_set_button_points(indev_button, btn_points);
+#endif
 }
 
 /**********************
@@ -261,6 +263,7 @@ static void mouse_get_xy(lv_coord_t * x, lv_coord_t * y)
     (*x) = 0;
     (*y) = 0;
 }
+#endif
 
 /*------------------
  * Keypad
@@ -269,6 +272,7 @@ static void mouse_get_xy(lv_coord_t * x, lv_coord_t * y)
 /*Initialize your keypad*/
 static void keypad_init(void)
 {
+    KEY4_Init();
     /*Your code comes here*/
 }
 
@@ -278,7 +282,7 @@ static void keypad_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data)
     static uint32_t last_key = 0;
 
     /*Get the current x and y coordinates*/
-    mouse_get_xy(&data->point.x, &data->point.y);
+    // mouse_get_xy(&data->point.x, &data->point.y);
 
     /*Get whether the a key is pressed and save the pressed key*/
     uint32_t act_key = keypad_get_key();
@@ -288,19 +292,16 @@ static void keypad_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data)
         /*Translate the keys to LVGL control characters according to your key definitions*/
         switch(act_key) {
         case 1:
-            act_key = LV_KEY_NEXT;
+            act_key = LV_KEY_ENTER;
             break;
         case 2:
-            act_key = LV_KEY_PREV;
-            break;
-        case 3:
             act_key = LV_KEY_LEFT;
             break;
-        case 4:
+        case 3:
             act_key = LV_KEY_RIGHT;
             break;
-        case 5:
-            act_key = LV_KEY_ENTER;
+        case 4:
+            act_key = LV_KEY_ESC;
             break;
         }
 
@@ -315,11 +316,12 @@ static void keypad_read(lv_indev_drv_t * indev_drv, lv_indev_data_t * data)
 /*Get the currently being pressed key.  0 if no key is pressed*/
 static uint32_t keypad_get_key(void)
 {
+    uint8_t RT;
     /*Your code comes here*/
-
-    return 0;
+    RT = KEY_Scan(0);
+    return RT;
 }
-
+#if 0
 /*------------------
  * Encoder
  * -----------------*/
@@ -346,7 +348,7 @@ static void encoder_handler(void)
     encoder_diff += 0;
     encoder_state = LV_INDEV_STATE_REL;
 }
-#endif
+
 
 /*------------------
  * Button
@@ -356,7 +358,7 @@ static void encoder_handler(void)
 static void button_init(void)
 {
     /*Your code comes here*/
-    KEY_Init();
+    
 }
 
 /*Will be called by the library to read the button*/
@@ -404,6 +406,7 @@ static bool button_is_pressed(uint8_t id)
 
     return false;
 }
+#endif
 
 #else /*Enable this file at the top*/
 

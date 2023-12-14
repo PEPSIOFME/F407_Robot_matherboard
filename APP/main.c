@@ -5,22 +5,54 @@ int main(void)
 {
 //    uint32_t data;
     // FATFS *fs; // TF卡文件系统
+    uint8_t i = 0;
 
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//设置系统中断优先级分组2
     usart1_Init();
     printf("ok!\n");
     delay_init();
+    RTC_InitConfig();
     LCD_Init();	   //液晶屏初始化
     lv_init();
     lv_port_disp_init();
-    lv_demo_widgets();
+    // lv_port_indev_init();
+    // lv_demo_widgets();
+    RTC_GetTimes(RTC_Format_BIN);
+    lv_obj_t* obj = lv_obj_create(lv_scr_act());
+    lv_obj_align(obj, LV_ALIGN_CENTER, 0, 0);
+    lv_obj_set_size(obj, 270, 90);
+    lv_obj_t* lableHour = lv_label_create(obj);
+    lv_label_set_text_fmt(lableHour, " %d :", RTC_TimeStruct.RTC_Hours);
+    //lv_obj_set_pos(lableHour, 20, 20);
+    lv_obj_set_style_text_font(lableHour, &lv_font_montserrat_48, LV_STATE_DEFAULT);
+    lv_obj_t* lableMin = lv_label_create(obj);
+    lv_label_set_text_fmt(lableMin, "%d ", RTC_TimeStruct.RTC_Minutes);
+    lv_obj_set_style_text_font(lableMin, &lv_font_montserrat_48, LV_STATE_DEFAULT);
+    lv_obj_align_to(lableMin, lableHour, LV_ALIGN_OUT_RIGHT_MID, 15, 0);
+    lv_obj_t* lableSec = lv_label_create(obj);
+    lv_label_set_text_fmt(lableSec, "%d ", RTC_TimeStruct.RTC_Seconds);
+    lv_obj_set_style_text_font(lableSec, &lv_font_montserrat_30, LV_STATE_DEFAULT);
+    lv_obj_align_to(lableSec, lableMin, LV_ALIGN_OUT_RIGHT_MID, 5, 3);
+    printf("ok12!\n");
     // Flash_SPI_Init();
     // SPI_Flash_Erase_Chip();
     // printf("id = %x\n", SPI_Flash_ReadID());
     while(1)
     {
+        printf("ok1!\n");
         lv_task_handler();
-        delay_ms(1);
+        printf("ok2!\n");
+        delay_ms(5);
+        printf("ok3!\n");
+        // KEY_Scan(0);
+        // lv_obj_invalidate(lableSec);
+        // lv_label_set_text_fmt(lableSec, "%d ", RTC_TimeStruct.RTC_Seconds);
+        // i++;
+        // if(i == 200){
+        //     printf("RTC_TimeStruct.RTC_Seconds = %d\n", RTC_TimeStruct.RTC_Seconds);
+        //     i = 0;
+        // }
+        // printf("RTC_TimeStruct.RTC_Seconds \n");
     }
     while(1)
     {
